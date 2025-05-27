@@ -1,2 +1,9 @@
-# project-showcase
-This website is a modern, responsive platform designed to showcase projects, provide information, or deliver interactive services. It features a clean, user-friendly interface with smooth navigation, ensuring a seamless experience across devices. 
+# swaraj-dweep-beach-explorer
+ sleek, interactive guide to Swaraj Dweep’s top beaches (Radhanagar, Elephant, and Kalapathar). Features:
+
+✔️ Clickable map with beach markers
+✔️ Photo galleries & activity highlights
+✔️ Travel tips with visual guides
+✔️ Mobile-friendly design
+
+Built with HTML/CSS/JS + Google Maps API. Ideal for travelers & devs.
