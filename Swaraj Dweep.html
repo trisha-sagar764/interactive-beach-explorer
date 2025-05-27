@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swaraj Dweep</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css">
+    <style>
+        :root {
+            --primary: #4285F4;
+            --primary-dark: #3367D6;
+            --secondary: #34A853;
+            --accent: #EA4335;
+            --light: #F1F3F4;
+            --dark: #202124;
+            --sand: #F5DEB3;
+            --ocean: #1E88E5;
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Parallax Header */
+        .parallax-header {
+            height: 80vh;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            perspective: 100px;
+        }
+        
+        .parallax-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), 
+                        url('https://images.unsplash.com/photo-1505228395891-9a51e7e86bf6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover fixed;
+            z-index: -1;
+            transform: translateZ(-10px) scale(1.1);
+        }
+        
+        .header-content {
+            transform: translateZ(0);
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .header-content h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            animation: fadeInDown 1s ease;
+        }
+        
+        .header-content p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease 0.2s forwards;
+            opacity: 0;
+        }
+        
+        .explore-btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(66, 133, 244, 0.4);
+            animation: pulse 2s infinite 1s;
+        }
+        
+        .explore-btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(66, 133, 244, 0.6);
+        }
+        
+        /* Floating Navigation */
+        .floating-nav {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border-radius: 50px;
+            padding: 0.75rem 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            z-index: 100;
+            display: flex;
+            gap: 1rem;
+            transition: var(--transition);
+        }
+        
+        .floating-nav button {
+            background: none;
+            border: none;
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .floating-nav button.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        /* 3D Map Container */
+        .map-3d-container {
+            width: 90%;
+            max-width: 1200px;
+            margin: -5rem auto 3rem;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 30px 50px rgba(0,0,0,0.2);
+            transform-style: preserve-3d;
+            transform: perspective(1000px) rotateX(5deg);
+            transition: var(--transition);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .map-3d-container:hover {
+            transform: perspective(1000px) rotateX(0deg);
+            box-shadow: 0 40px 60px rgba(0,0,0,0.3);
+        }
+        
+        #map {
+            width: 100%;
+            height: 70vh;
+            border: none;
+        }
+        
+        /* Beach Cards */
+        .beach-cards {
+            display: flex;
+            gap: 2rem;
+            padding: 0 2rem;
+            margin-bottom: 4rem;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+        }
+        
+        .beach-cards::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .beach-card {
+            min-width: 300px;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            transition: var(--transition);
+            scroll-snap-align: start;
+            position: relative;
+        }
+        
+        .beach-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        .beach-card-img {
+            height: 200px;
+            width: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+        
+        .beach-card-content {
+            padding: 1.5rem;
+        }
+        
+        .beach-card h3 {
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+        
+        .beach-card p {
+            color: #666;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .beach-card .btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: var(--transition);
+        }
+        
+        .beach-card .btn:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        /* Beach Details Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition);
+        }
+        
+        .modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 900px;
+            max-height: 90vh;
+            border-radius: 20px;
+            overflow: hidden;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: var(--transition);
+            position: relative;
+        }
+        
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: var(--transition);
+        }
+        
+        .modal-close:hover {
+            background: var(--primary-dark);
+            transform: rotate(90deg);
+        }
+        
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .map-3d-container {
+                margin-top: 0;
+                transform: none;
+                width: 100%;
+                border-radius: 0;
+            }
+            
+            .floating-nav {
+                bottom: 1rem;
+                padding: 0.5rem 1rem;
+            }
+            
+            .floating-nav button span {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Parallax Header -->
+    <header class="parallax-header">
+        <div class="parallax-bg"></div>
+        <div class="header-content">
+            <h1>Swaraj Dweep Beaches</h1>
+            <p>Discover the most stunning tropical beaches in the Swaraj Dweep Islands</p>
+            
+        </div>
+    </header>
+    
+    <!-- 3D Map Container -->
+    <div class="map-3d-container" id="explore">
+        <div id="map"></div>
+    </div>
+    
+    <!-- Floating Navigation -->
+    <div class="floating-nav">
+        <button class="active" id="nav-beaches"><i class="fas fa-umbrella-beach"></i> <span>Beaches</span></button>
+        <button id="nav-activities"><i class="fas fa-swimmer"></i> <span>Activities</span></button>
+        <button id="nav-photos"><i class="fas fa-camera"></i> <span>Photos</span></button>
+        <button id="nav-tips"><i class="fas fa-lightbulb"></i> <span>Tips</span></button>
+    </div>
+    
+    <!-- Beach Cards -->
+    <div class="beach-cards">
+        <!-- Cards will be dynamically inserted here -->
+    </div>
+    
+    <!-- Modal for Beach Details -->
+    <div class="modal" id="beach-modal">
+        <div class="modal-content">
+            <div class="modal-close"><i class="fas fa-times"></i></div>
+            <div id="modal-content"></div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD2KXirCCsifJw8PhOtaIAlEdURjOSNvSc&map_ids=fa9d113f8fba2a3128de70ab&callback=initMap" async defer></script>
+    <script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"></script>
+    <script>
+        // Beach data with enhanced details
+        const beaches = [
+            {
+                id: 'radhanagar',
+                name: "Radhanagar Beach",
+                position: { lat: 11.985795795506284, lng: 92.94973643484651 },
+                description: "Voted as Asia's best beach, Radhanagar Beach is recognized for its natural beauty and environmental sustainability, it has been awarded the Blue Flag beach certification, which is an international eco-label for beaches meeting strict environmental, safety, and cleanliness standards.",
+                shortDesc: "Asia's best beach with stunning sunsets",
+                photos: [
+                    "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Radha_Nagar_beach%2C_Havelock_Island%2C_Andamn%2C_India-_Sun_set_view.jpg/500px-Radha_Nagar_beach%2C_Havelock_Island%2C_Andamn%2C_India-_Sun_set_view.jpg",
+                    "https://havelockislandbeachresort.com/storage/logo/sight-seeing-at-havelock/radhanagar-beach.jpg",
+                    "https://www.andamanocean.in/wp-content/uploads/2023/04/radhanagar-beach-img2-min-1024x683.jpg"
+                ],
+                stats: [
+                    { icon: "fas fa-umbrella-beach", label: "Best for: Sunsets" },
+                    { icon: "fas fa-swimmer", label: "Swimming: Excellent" },
+                    { icon: "fas fa-utensils", label: "Food: Available" },
+                    { icon: "fas fa-sun", label: "Best time: 10AM-5PM" }
+                ],
+                activities: ["Swimming", "Sunbathing", "Photography", "Beach Walk"],
+                tips: [
+                    "Stay until sunset for the best experience",
+                    "Try the fresh coconut water from beach vendors",
+                    "Weekdays are less crowded"
+                ],
+            },
+            {
+                id: 'elephant',
+                name: "Elephant Beach",
+                position: { lat: 12.009191675576732, lng: 92.9436093898062 },
+                description: "Famous for its coral reefs and water sports, Elephant Beach is a paradise for snorkelers and divers. The beach can be reached by a short boat ride or a jungle trek through beautiful forest trails.",
+                shortDesc: "Snorkeling paradise with vibrant coral reefs",
+                photos: [
+                    "https://cdn.experienceandamans.com/images/elephant-beach-havelock-island.jpg",
+                    "https://www.go2andaman.com/wp-content/uploads/2021/02/go2andaman_havelock_6193.jpg",
+                    "https://cdn.prod.website-files.com/5b56319971ac8c7475a9d877/5f711753f3dbe9de67044794_elephant-beach-shoreline-.jpg"
+                ],
+                stats: [
+                    { icon: "fas fa-water", label: "Best for: Snorkeling" },
+                    { icon: "fas fa-fish", label: "Marine Life: Abundant" },
+                    { icon: "fas fa-ship", label: "Access: Boat/Trek" },
+                    { icon: "fas fa-clock", label: "Best time: 9 AM-12 PM" }
+                ],
+                activities: ["Snorkeling", "Scuba Diving", "Glass Bottom Boat", "Sea Walking"],
+                tips: [
+                    "Book snorkeling gear in advance",
+                    "The jungle trek takes about 30-40 minutes",
+                    "Morning hours offer the best visibility"
+                ],
+
+            },
+            {
+                id: 'kalapathar',
+                name: "Kalapathar Beach",
+                position: { lat: 12.00150074443916, lng: 93.00658972777448 },
+                description: "Named after the black rocks that adorn its coastline, Kalapathar Beach offers a serene and less crowded alternative. The contrast between the black rocks, white sand, and blue water creates stunning views.",
+                shortDesc: "Serene beach with dramatic black rock formations",
+                photos: [
+                    "https://www.trawell.in/admin/images/upload/116165502Andaman_Kalapathar_Beach_Main.jpg",
+                    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/09/84/c5/06/kaala-pathar-beach.jpg?w=900&h=500&s=1",
+                    "https://andamantourtravel.com/assets/img/kalapathar210.jpg"
+                ],
+                stats: [
+                    { icon: "fas fa-mountain", label: "Best for: Photography" },
+                    { icon: "fas fa-crow", label: "Crowd: Less crowded" },
+                    { icon: "fas fa-tree", label: "Shade: Available" },
+                    { icon: "fas fa-clock", label: "Best time: All day" }
+                ],
+                activities: ["Photography", "Relaxation", "Beachcombing", "Bird Watching"],
+                tips: [
+                    "Great spot for a peaceful picnic",
+                    "The black rocks make for excellent photo backdrops",
+                    "Visit during low tide for best rock formations"
+                ],
+            }
+        ];
+        
+        // Initialize map
+        let map;
+        let markers = [];
+        let activeMarker = null;
+        
+        function initMap() {
+            // Default center coordinates (Havelock Island)
+            const defaultCenter = { lat: 11.976520412692793, lng: 92.98877368813234 }; 
+            
+            // Create the map with custom style
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: defaultCenter,
+                zoom: 12,
+                styles: [
+                    {
+                        "featureType": "water",
+                        "elementType": "geometry",
+                        "stylers": [
+                            { "color": "#1E88E5" },
+                            { "lightness": 17 }
+                        ]
+                    },
+                    {
+                        "featureType": "landscape",
+                        "elementType": "geometry",
+                        "stylers": [
+                            { "color": "#F5F5F5" },
+                            { "lightness": 20 }
+                        ]
+                    },
+                    {
+                        "featureType": "road",
+                        "elementType": "geometry",
+                        "stylers": [
+                            { "color": "#FFFFFF" }
+                        ]
+                    },
+                    {
+                        "featureType": "poi",
+                        "elementType": "geometry",
+                        "stylers": [
+                            { "color": "#f5f5f5" }
+                        ]
+                    }
+                ],
+                disableDefaultUI: true,
+                zoomControl: true,
+                mapTypeControl: false,
+                streetViewControl: false
+            });
+            
+            // Create custom markers
+            createMarkers();
+            
+            // Initialize beach cards
+            initBeachCards();
+            
+            // Set up event listeners
+            setupEventListeners();
+        }
+        
+        function createMarkers() {
+            beaches.forEach(beach => {
+                const marker = new google.maps.Marker({
+                    position: beach.position,
+                    map: map,
+                    title: beach.name,
+                    icon: {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        fillColor: "#4285F4",
+                        fillOpacity: 1,
+                        strokeColor: "white",
+                        strokeWeight: 2,
+                        scale: 8
+                    },
+                    animation: google.maps.Animation.DROP
+                });
+                
+                marker.addListener("click", () => {
+                    // Reset all markers
+                    resetMarkers();
+                    
+                    // Animate clicked marker
+                    marker.setAnimation(google.maps.Animation.BOUNCE);
+                    setTimeout(() => {
+                        marker.setAnimation(null);
+                    }, 1500);
+                    
+                    // Center map on marker
+                    map.panTo(marker.getPosition());
+                    
+                    // Show beach details
+                    showBeachDetails(beach);
+                    
+                    // Highlight corresponding card
+                    highlightCard(beach.id);
+                });
+                
+                markers.push(marker);
+            });
+        }
+        
+        function resetMarkers() {
+            markers.forEach(marker => {
+                marker.setAnimation(null);
+            });
+        }
+        
+        function initBeachCards() {
+            const cardsContainer = document.querySelector('.beach-cards');
+            
+            beaches.forEach(beach => {
+                const card = document.createElement('div');
+                card.className = 'beach-card';
+                card.id = `${beach.id}-card`;
+                
+                card.innerHTML = `
+                    <img src="${beach.photos[0]}" alt="${beach.name}" class="beach-card-img">
+                    <div class="beach-card-content">
+                        <h3>${beach.name}</h3>
+                        <p>${beach.shortDesc}</p>
+                        <a href="#" class="btn explore-btn" data-beach="${beach.id}">Explore</a>
+                    </div>
+                `;
+                
+                cardsContainer.appendChild(card);
+            });
+            
+            // Add click event to all explore buttons
+            document.querySelectorAll('.explore-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const beachId = btn.getAttribute('data-beach');
+                    const beach = beaches.find(b => b.id === beachId);
+                    
+                    if (beach) {
+                        // Find and trigger corresponding marker
+                        const markerIndex = beaches.findIndex(b => b.id === beachId);
+                        if (markerIndex !== -1) {
+                            google.maps.event.trigger(markers[markerIndex], 'click');
+                        }
+                    }
+                });
+            });
+        }
+        
+        function highlightCard(beachId) {
+            document.querySelectorAll('.beach-card').forEach(card => {
+                card.style.transform = card.id === `${beachId}-card` ? 'translateY(-10px)' : 'none';
+                card.style.boxShadow = card.id === `${beachId}-card` ? '0 20px 40px rgba(0,0,0,0.15)' : '0 15px 30px rgba(0,0,0,0.1)';
+            });
+        }
+        
+        function showBeachDetails(beach) {
+            const modal = document.getElementById('beach-modal');
+            const modalContent = document.getElementById('modal-content');
+            
+            // Create stats HTML
+            const statsHTML = beach.stats.map(stat => `
+                <div class="stat-item">
+                    <i class="${stat.icon}"></i>
+                    <span>${stat.label}</span>
+                </div>
+            `).join('');
+            
+            // Create activities HTML
+            const activitiesHTML = beach.activities.map(activity => `
+                <li>${activity}</li>
+            `).join('');
+            
+            // Create tips HTML
+            const tipsHTML = beach.tips.map(tip => `
+                <li>${tip}</li>
+            `).join('');
+            
+            // Create photos HTML for Swiper
+            const photosHTML = beach.photos.map(photo => `
+                <div class="swiper-slide">
+                    <img src="${photo}" alt="${beach.name}" style="width:100%; height:400px; object-fit:cover;">
+                </div>
+            `).join('');
+            
+            // Create full modal content
+            modalContent.innerHTML = `
+                <div class="swiper beach-photos">
+                    <div class="swiper-wrapper">
+                        ${photosHTML}
+                    </div>
+                    <div class="swiper-pagination"></div>
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
+                </div>
+                
+                <div style="padding: 2rem;">
+                    <h2 style="font-family: 'Playfair Display', serif; margin-bottom: 1rem;">${beach.name}</h2>
+                    <p style="margin-bottom: 1.5rem;">${beach.description}</p>
+                    
+                    <div style="display: flex; gap: 1.5rem; margin: 1.5rem 0; flex-wrap: wrap;">
+                        ${statsHTML}
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
+                        <div>
+                            <h3 style="margin-bottom: 1rem; color: var(--primary);">Activities</h3>
+                            <ul style="list-style-position: inside; color: #666;">
+                                ${activitiesHTML}
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 style="margin-bottom: 1rem; color: var(--primary);">Pro Tips</h3>
+                            <ul style="list-style-position: inside; color: #666;">
+                                ${tipsHTML}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Initialize Swiper
+            new Swiper('.beach-photos', {
+                loop: true,
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+            });
+            
+            // Show modal
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function setupEventListeners() {
+            // Modal close button
+            document.querySelector('.modal-close').addEventListener('click', () => {
+                document.getElementById('beach-modal').classList.remove('active');
+                document.body.style.overflow = 'auto';
+            });
+            
+            // Floating navigation buttons
+            document.querySelectorAll('.floating-nav button').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.floating-nav button').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    // In a complete implementation, this would filter/show different content
+                    console.log('Navigation to:', btn.id.replace('nav-', ''));
+                });
+            });
+            
+            // Parallax effect on header
+            window.addEventListener('scroll', () => {
+                const scrollPosition = window.pageYOffset;
+                const parallaxHeader = document.querySelector('.parallax-header');
+                const parallaxBg = document.querySelector('.parallax-bg');
+                
+                if (parallaxHeader && parallaxBg) {
+                    parallaxBg.style.transform = `translateZ(-10px) scale(1.1) translateY(${scrollPosition * 0.5}px)`;
+                }
+            });
+        }
+        
+        // Error handling
+        window.onerror = function(message) {
+            console.error("Error:", message);
+            document.getElementById('map').innerHTML = `
+                <div style="padding: 2rem; text-align: center; color: red;">
+                    <h3>Map Loading Error</h3>
+                    <p>We couldn't load the map. Please check your internet connection.</p>
+                    <p>Showing beach information only.</p>
+                </div>
+            `;
+            
+            // Fallback - show all beach cards expanded
+            document.querySelector('.beach-cards').style.flexWrap = 'wrap';
+        };
+    </script>
+</body>
+</html>
